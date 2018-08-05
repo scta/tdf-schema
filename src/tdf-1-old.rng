@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar 
+  xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  xmlns:dc="http://dublincore.org/2012/06/14/dcelements#"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="transcriptions" xmlns="http://relaxng.org/ns/structure/1.0">
+      <optional>
+        <attribute name="next-version"/>
+      </optional>
+      <oneOrMore>
+        <ref name="transcription"/>
+      </oneOrMore>
+      <optional>
+        <element name="translationManifestations"> <!-- this might be better titled born digital manifestations -->
+          <ref name="manifestation"/>
+        </element>
+      </optional>
+    </element>
+  </start>
+  <define name="transcription">
+    <element name="transcription">
+      
+      <optional>
+        <attribute name="use-for-extraction"/>
+        <a:documentation>This attribute is to identify which transcription file should 
+          be used as the default or canonical file from which expression level should be extracted. 
+          Likewise, all other transcriptions files should mirror this file in structure and xml:ids </a:documentation>
+      </optional>
+      <optional>
+        <attribute name="hash"/>
+        <a:documentation>This attribute is used to indicate whether the transcriptions is a fixed file, 
+          with unique hash (an IPFS hash should be used) or if the file is the working head of a version history. 
+          If the later the keyword "head" should be used. The definining characteristic of a transcription file designated 
+          is that it does not refer to file with specific content that can be hashed, but to the most recent version of a 
+          transcription chain. Thus a file designated as "head" cannot take a "hasSuccessor" attribute.
+        </a:documentation>
+      </optional>
+      <optional>
+        <attribute name="name"/>
+        <a:documentation>
+          The value of the name attribute must be unique, as it comes to represent the unique id 
+          of the this particular transcription. If the transcription is not designated as "hash=head" 
+          it is recommended that the hash be used as the name, but in all cases a name is required. 
+          If the transcription is designated as "head" 
+          the name can be anything but must be unique within the scope of the manifestation it is a transcription of.
+          The assumed and default name is "transcription". The default is recommend, 
+          because the naming of transcription "head" files 
+          can be coordinated across SCTA items, so that all the transcriptions for a given sections can be grouped together.
+          For example: the default transcription of distinction 1 for a given manifestation, could be automatically 
+          be assumed to be the aggregate of every child transcription with the name "transcriptions". In the case of "head" 
+          transcription, if no "name" attribute is given, the name "transcription" is assumed.
+        </a:documentation>
+      </optional>
+      <optional>
+        <attribute name="type">
+          <choice>
+            <value>critical</value>
+            <value>diplomatic</value>
+            <value>translation</value>
+          </choice>
+        </attribute>
+        <a:documentation>
+          The Type attribute indicates the type of transcription this. 
+          Three transcription types are supported, critical, diplomatic, and translation.
+        </a:documentation>
+      </optional>
+      <optional>
+        <attribute name="isTranscriptionOf"/>
+        <a:documentation>
+          The "isTranscriptionOf" is used to associate a transcription to a manifestation. 
+          The manifestation slug must be used that corresponds to the manifestation slug 
+          associated with the expression in question
+        </a:documentation>
+      </optional>
+      <optional>
+        <attribute name="canonical"/>
+        <a:documentation>Canonical identifies one transcription per manifestations as canonical 
+        or the default transcription. Normally, the transcriptions designated as head 
+        should be identified as canonical.</a:documentation>
+      </optional>
+      <optional>
+        <attribute name="hasSuccessor"/>
+        <a:documentation>If a non "head" transcription is a previous version another transcription, 
+        this should be indicated using the full SCTA resource id of that transcription. 
+        This, in effect creates a version chain, for a given transcription</a:documentation>
+      </optional>
+      <optional>
+        <attribute name="versionNo"/>
+        <a:documentation>A version number can be associated with a non-"head" transcription. 
+        Version numbers should always be less than the number of an associated successor transcription</a:documentation>
+      </optional>
+      <optional>
+        <attribute name="language"/>
+        <a:documentation>The language of a transcription can be indicated with the language attribute 
+          following ISO 639-1 Language Codes</a:documentation>
+      </optional>
+      <text/>
+      <a:documentation>The text value of the transcription should be file name of the "head" transcription file name</a:documentation>
+    </element>
+  </define>
+  <define name="manifestation">
+    <element name="manifestation">
+      <attribute name="name"/>
+      <attribute name="lang"/>
+      <attribute name="title"/>
+    </element>
+  </define>
+</grammar>
